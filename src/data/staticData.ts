@@ -151,7 +151,7 @@ export const CUSTOMER_ORDERS_RESPONSE: {
       paymentStatus: 'Overdue',
       fulfillmentStatus: 'unfulfilled',
       paymentsProbability: 100,
-      b2bRiskScore: 10,
+      b2bRiskScore: 0,
     },
     {
       orderNum: '#1031',

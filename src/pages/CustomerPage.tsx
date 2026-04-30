@@ -2,7 +2,7 @@ import { Link } from '../router/Link';
 import { useEffect, useMemo, useState } from 'react';
 import { PageShell } from '../components/layout/PageShell';
 import { Card } from '../components/ui/Card';
-import { Title, Subtitle, MutedBlock } from '../components/ui/Typography';
+import { Title, Subtitle } from '../components/ui/Typography';
 import { IconButton } from '../components/ui/IconButton';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import { SearchRow } from '../components/search/SearchRow';
