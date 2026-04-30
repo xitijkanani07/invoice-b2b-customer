@@ -49,6 +49,17 @@ export type OrdersApiResponse = {
   next: number | null;
 };
 
+export type B2BStoreRow = {
+  _id: string;
+  storeName: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchB2BStores(): Promise<B2BStoreRow[]> {
+  return await httpGet<B2BStoreRow[]>('/api/b2bStores/getAll', {});
+}
+
 export async function fetchB2BCustomersData(shopName: string, params: {
   page: number;
   limit: number;

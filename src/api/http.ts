@@ -29,9 +29,27 @@ export async function httpGet<T>(
   });
 
   if (!res.ok) {
+    const contentType = res.headers.get('content-type') ?? '';
     const text = await res.text().catch(() => '');
-    throw new Error(`GET ${path} failed (${res.status}): ${text || res.statusText}`);
+    const detail = formatErrorDetail(text, contentType) || res.statusText;
+    throw new Error(`GET ${path} failed (${res.status}): ${detail}`.trimEnd());
   }
   return (await res.json()) as T;
+}
+
+function formatErrorDetail(bodyText: string, contentType: string) {
+  const raw = (bodyText ?? '').trim();
+  if (!raw) return '';
+
+  // If server returns an HTML error page, don't dump it into the UI.
+  const looksHtml =
+    contentType.toLowerCase().includes('text/html') ||
+    raw.toLowerCase().startsWith('<!doctype html') ||
+    raw.toLowerCase().startsWith('<html');
+  if (looksHtml) return '';
+
+  // Keep it short + single-line for UI.
+  const singleLine = raw.replace(/\s+/g, ' ');
+  return singleLine.length > 180 ? `${singleLine.slice(0, 177)}...` : singleLine;
 }
 

@@ -36,7 +36,7 @@ export function RouteView() {
     );
   }
 
-  if (loc.pathname === '/') return <HomePage page={params.page} limit={params.limit} />;
+  if (loc.pathname === '/') return <HomePage />;
   if (loc.pathname === '/store') return <StorePage store={params.store} page={params.page} limit={params.limit} />;
   if (loc.pathname === '/store/customer')
     return (

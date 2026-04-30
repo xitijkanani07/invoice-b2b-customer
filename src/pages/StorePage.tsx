@@ -108,6 +108,10 @@ export function StorePage({ store, page, limit }: Props) {
           <SearchRow
             value={q}
             onChange={setQ}
+            onCancel={() => {
+              setQ('');
+              setShowSearch(false);
+            }}
             placeholder="Search by email…"
             ariaLabel="Search customers by email"
             autoFocus

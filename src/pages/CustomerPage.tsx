@@ -144,6 +144,10 @@ export function CustomerPage({ store, customerId, page, limit }: Props) {
             <SearchRow
               value={q}
               onChange={setQ}
+              onCancel={() => {
+                setQ('');
+                setShowSearch(false);
+              }}
               placeholder="Search orders…"
               ariaLabel="Search orders"
               autoFocus
