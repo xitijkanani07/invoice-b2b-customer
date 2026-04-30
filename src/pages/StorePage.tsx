@@ -7,10 +7,10 @@ import { IconButton } from '../components/ui/IconButton';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import { SearchRow } from '../components/search/SearchRow';
 import { DataTable } from '../components/table/DataTable';
+import { TableLoadingBody } from '../components/table/TableLoadingBody';
 import linkStyles from '../components/ui/LinkText.module.css';
 import styles from './StorePage.module.css';
 import { Pagination } from '../components/pagination/Pagination';
-import { Loader } from '../components/ui/Loader';
 import alertStyles from '../components/ui/Alert.module.css';
 import { fetchB2BCustomersData, type CustomersApiResponse } from '../api/b2bApi';
 
@@ -86,7 +86,6 @@ export function StorePage({ store, page, limit }: Props) {
               <Subtitle>
                 {store ? `Showing customers for ${store}.` : 'Pick a store to filter customers.'}
               </Subtitle>
-              {loading ? <Loader label={null} center size={20} /> : null}
             </div>
             <div className={styles.headerRight}>
               <div className={styles.count}>{data ? `${data.totalCount} customers` : ''}</div>
@@ -128,32 +127,36 @@ export function StorePage({ store, page, limit }: Props) {
             </tr>
           }
         >
-          {customers.map((c) => {
-            const to = `/store/customer?store=${encodeURIComponent(
-              c.storeName,
-            )}&customerId=${encodeURIComponent(String(c.customerId))}`;
-            return (
-              <tr key={c._id}>
-                <td>
-                  <Link className={linkStyles.rowLink} to={to}>
-                    {c.customerId}
-                  </Link>
-                </td>
-                <td>
-                  <Link className={linkStyles.rowLink} to={to}>
-                    {c.first_name} {c.last_name}
-                  </Link>
-                </td>
-                <td>{c.email}</td>
-                <td>{new Date(c.createdAt).toLocaleString()}</td>
-                <td>
-                  <Link className={[linkStyles.rowLink, linkStyles.nowrap].join(' ')} to={to}>
-                    View orders <span aria-hidden>→</span>
-                  </Link>
-                </td>
-              </tr>
-            );
-          })}
+          {loading ? <TableLoadingBody columns={5} rows={6} /> : null}
+
+          {!loading
+            ? customers.map((c) => {
+                const to = `/store/customer?store=${encodeURIComponent(
+                  c.storeName,
+                )}&customerId=${encodeURIComponent(String(c.customerId))}`;
+                return (
+                  <tr key={c._id}>
+                    <td>
+                      <Link className={linkStyles.rowLink} to={to}>
+                        {c.customerId}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link className={linkStyles.rowLink} to={to}>
+                        {c.first_name} {c.last_name}
+                      </Link>
+                    </td>
+                    <td>{c.email}</td>
+                    <td>{new Date(c.createdAt).toLocaleString()}</td>
+                    <td>
+                      <Link className={[linkStyles.rowLink, linkStyles.nowrap].join(' ')} to={to}>
+                        View orders <span aria-hidden>→</span>
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })
+            : null}
           {!loading && customers.length === 0 ? (
             <tr>
               <td colSpan={5} style={{ padding: 14, color: 'var(--text)' }}>

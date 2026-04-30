@@ -7,6 +7,7 @@ import { IconButton } from '../components/ui/IconButton';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import { SearchRow } from '../components/search/SearchRow';
 import { DataTable } from '../components/table/DataTable';
+import { TableLoadingBody } from '../components/table/TableLoadingBody';
 import alertStyles from '../components/ui/Alert.module.css';
 import styles from './CustomerPage.module.css';
 import { Pagination } from '../components/pagination/Pagination';
@@ -28,6 +29,7 @@ export function CustomerPage({ store, customerId, page, limit }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const storeName = store ?? '';
+  const hasParams = Boolean(storeName) && customerId !== null;
 
   useEffect(() => {
     if (!storeName || customerId === null) return;
@@ -63,7 +65,11 @@ export function CustomerPage({ store, customerId, page, limit }: Props) {
 
   const customerName = data ? `${data.customer.first_name} ${data.customer.last_name}` : '-';
   const email = data?.customer.email ?? '-';
+  const address = data
+    ? `${data.customer.address.city}, ${data.customer.address.province}, ${data.customer.address.country}`
+    : '-';
   const orders = useMemo(() => data?.orders ?? [], [data]);
+  const detailsLoading = hasParams && loading && !data && !error;
 
   return (
     <PageShell
@@ -77,119 +83,142 @@ export function CustomerPage({ store, customerId, page, limit }: Props) {
         </>
       }
     >
-      <Card
-        header={
-          <>
-            <div>
-              <Title>Orders</Title>
-              <Subtitle>
-                Customer Name: {customerName} | Email: {email} | Store: {storeName}
-              </Subtitle>
-            </div>
-            <div className={styles.headerRight}>
-              <div className={styles.count}>{data ? `${data.totalCount} orders` : ''}</div>
-              <IconButton
-                active={showSearch}
-                aria-label={showSearch ? 'Hide search' : 'Show search'}
-                onClick={() => setShowSearch((v) => !v)}
-              >
-                <SearchIcon />
-              </IconButton>
-            </div>
-          </>
-        }
-      >
-        {data ? (
-          <MutedBlock>
-            Address: {data.customer.address.city}, {data.customer.address.province},{' '}
-            {data.customer.address.country}
-          </MutedBlock>
-        ) : null}
-
-        {showSearch ? (
-          <SearchRow
-            value={q}
-            onChange={setQ}
-            placeholder="Search orders…"
-            ariaLabel="Search orders"
-            autoFocus
-          />
-        ) : null}
-
-        {!storeName || customerId === null ? (
-          <div className={alertStyles.error} style={{ marginBottom: 10 }}>
-            Missing store/customer. Please go back and select a customer.
-          </div>
-        ) : null}
-
-        {error ? <div className={alertStyles.error}>{error}</div> : null}
-
-        <DataTable
+      <div className={styles.cards}>
+        <Card
           header={
-            <tr>
-              <th>Order</th>
-              <th>Invoice date</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Payment</th>
-              <th>Probability</th>
-            </tr>
+            <>
+              <div>
+                <Title>Customer details</Title>
+                <Subtitle>Store: {storeName || '-'}</Subtitle>
+              </div>
+            </>
           }
         >
-          {loading ? (
-            <tr>
-              <td colSpan={6} style={{ padding: 16 }}>
-                <Loader label={null} center size={20} />
-              </td>
-            </tr>
+          {!hasParams ? (
+            <div className={alertStyles.error}>
+              Missing store/customer. Please go back and select a customer.
+            </div>
           ) : null}
 
-          {!loading
-            ? orders.map((o) => (
-                <tr key={o.orderId}>
-                  <td>{o.orderNum}</td>
-                  <td>{new Date(o.invoiceDate).toLocaleString()}</td>
-                  <td>{o.totalAmount}</td>
-                  <td>
-                    {o.status}
-                    {o.isOrderCancelled ? <span style={{ marginLeft: 8 }}>(Cancelled)</span> : null}
-                  </td>
-                  <td>{o.paymentStatus}</td>
-                  <td>
-                    {o.paymentsProbability === null
-                      ? 'null'
-                      : o.paymentsProbability === undefined
-                        ? 'undefined'
-                        : typeof o.paymentsProbability === 'number' &&
-                            Number.isFinite(o.paymentsProbability) &&
-                            o.paymentsProbability >= 1 &&
-                            o.paymentsProbability <= 100
-                          ? `${o.paymentsProbability}%`
-                          : String(o.paymentsProbability)}
-                  </td>
-                </tr>
-              ))
-            : null}
-
-          {!loading && orders.length === 0 ? (
-            <tr>
-              <td colSpan={6} style={{ padding: 14, color: 'var(--text)' }}>
-                No orders to display.
-              </td>
-            </tr>
+          {detailsLoading ? (
+            <Loader label={null} center size={20} />
+          ) : hasParams ? (
+            <div className={styles.detailsGrid}>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Customer Name:</span>
+                <span>{customerName}</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Email:</span>
+                <span>{email}</span>
+              </div>
+              <div className={styles.detailItem} style={{ gridColumn: '1 / -1' }}>
+                <span className={styles.detailLabel}>Address:</span>
+                <span>{address}</span>
+              </div>
+            </div>
           ) : null}
-        </DataTable>
+        </Card>
 
-        {data ? (
-          <Pagination
-            page={data.page}
-            limit={data.limit}
-            totalCount={data.totalCount}
-            prev={data.prev}
-            next={data.next}
-          />
-        ) : null}
-      </Card>
+        <Card
+          header={
+            <>
+              <div>
+                <Title>Orders</Title>
+                <Subtitle>Customer orders</Subtitle>
+              </div>
+              <div className={styles.headerRight}>
+                <div className={styles.count}>{data ? `${data.totalCount} orders` : ''}</div>
+                <IconButton
+                  active={showSearch}
+                  aria-label={showSearch ? 'Hide search' : 'Show search'}
+                  onClick={() => setShowSearch((v) => !v)}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </div>
+            </>
+          }
+        >
+          {hasParams && showSearch ? (
+            <SearchRow
+              value={q}
+              onChange={setQ}
+              placeholder="Search orders…"
+              ariaLabel="Search orders"
+              autoFocus
+            />
+          ) : null}
+
+          {error ? <div className={alertStyles.error}>{error}</div> : null}
+
+          {hasParams ? (
+            <>
+              <DataTable
+                header={
+                  <tr>
+                    <th>Order</th>
+                    <th>Invoice date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Probability</th>
+                  </tr>
+                }
+              >
+                {loading ? <TableLoadingBody columns={6} rows={7} /> : null}
+
+                {!loading
+                  ? orders.map((o) => (
+                      <tr key={o.orderId}>
+                        <td>{o.orderNum}</td>
+                        <td>{new Date(o.invoiceDate).toLocaleString()}</td>
+                        <td>{o.totalAmount}</td>
+                        <td>
+                          {o.status}
+                          {o.isOrderCancelled ? (
+                            <span style={{ marginLeft: 8 }}>(Cancelled)</span>
+                          ) : null}
+                        </td>
+                        <td>{o.paymentStatus}</td>
+                        <td>
+                          {o.paymentsProbability === null
+                            ? 'null'
+                            : o.paymentsProbability === undefined
+                              ? 'undefined'
+                              : typeof o.paymentsProbability === 'number' &&
+                                  Number.isFinite(o.paymentsProbability) &&
+                                  o.paymentsProbability >= 1 &&
+                                  o.paymentsProbability <= 100
+                                ? `${o.paymentsProbability}%`
+                                : String(o.paymentsProbability)}
+                        </td>
+                      </tr>
+                    ))
+                  : null}
+
+                {!loading && orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ padding: 14, color: 'var(--text)' }}>
+                      No orders to display.
+                    </td>
+                  </tr>
+                ) : null}
+              </DataTable>
+
+              {data ? (
+                <Pagination
+                  page={data.page}
+                  limit={data.limit}
+                  totalCount={data.totalCount}
+                  prev={data.prev}
+                  next={data.next}
+                />
+              ) : null}
+            </>
+          ) : null}
+        </Card>
+      </div>
     </PageShell>
   );
 }
