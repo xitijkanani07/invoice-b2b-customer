@@ -17,7 +17,10 @@ export function PasswordGate({ onUnlock }: Props) {
   const toastTimer = useRef<number | null>(null);
 
   const disabled = useMemo(() => pw.trim().length === 0, [pw]);
-  const expectedPassword = (import.meta.env.REACT_APP_PASSWORD as string | undefined) ?? 'helloxitij';
+  const expectedPassword =
+    (import.meta.env.REACT_APP_PASSWORD as string | undefined) ??
+    (import.meta.env.REACT_API_PASSWORD as string | undefined) ??
+    'helloxitij';
 
   return (
     <PageShell>

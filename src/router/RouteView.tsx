@@ -1,13 +1,43 @@
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { CustomerPage } from '../pages/CustomerPage';
 import { HomePage } from '../pages/HomePage';
 import { StorePage } from '../pages/StorePage';
 import { getLocationSnapshot, readSearchParam, subscribeToLocationChanges } from './navigation';
 import { PasswordGate } from './PasswordGate';
 
+const UNLOCK_KEY = 'invoiceB2bEanbled';
+const UNLOCK_TTL_MS = 10 * 60 * 1000;
+
 export function RouteView() {
   const loc = useSyncExternalStore(subscribeToLocationChanges, getLocationSnapshot, getLocationSnapshot);
-  const [unlocked, setUnlocked] = useState(() => window.localStorage.getItem('ih_pw_ok') === '1');
+  const [unlocked, setUnlocked] = useState(() => {
+    const raw = window.localStorage.getItem(UNLOCK_KEY);
+    const expiresAt = raw ? Number(raw) : NaN;
+    if (!Number.isFinite(expiresAt)) return false;
+    if (Date.now() >= expiresAt) {
+      window.localStorage.removeItem(UNLOCK_KEY);
+      return false;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (!unlocked) return;
+    const raw = window.localStorage.getItem(UNLOCK_KEY);
+    const expiresAt = raw ? Number(raw) : NaN;
+    if (!Number.isFinite(expiresAt)) return;
+    const msLeft = expiresAt - Date.now();
+    if (msLeft <= 0) {
+      window.localStorage.removeItem(UNLOCK_KEY);
+      setUnlocked(false);
+      return;
+    }
+    const t = window.setTimeout(() => {
+      window.localStorage.removeItem(UNLOCK_KEY);
+      setUnlocked(false);
+    }, msLeft);
+    return () => window.clearTimeout(t);
+  }, [unlocked]);
 
   const params = useMemo(() => {
     const store = readSearchParam(loc.search, 'store');
@@ -29,7 +59,7 @@ export function RouteView() {
     return (
       <PasswordGate
         onUnlock={() => {
-          window.localStorage.setItem('ih_pw_ok', '1');
+          window.localStorage.setItem(UNLOCK_KEY, String(Date.now() + UNLOCK_TTL_MS));
           setUnlocked(true);
         }}
       />

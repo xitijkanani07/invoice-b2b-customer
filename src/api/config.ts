@@ -1,10 +1,8 @@
 export function getApiBaseUrl() {
-  const raw =
-    (import.meta.env.VITE_API_ENDPOINT as string | undefined) ||
-    // Support CRA-style env var name too (some setups still inject it).
-    ((import.meta.env as unknown as Record<string, string | undefined>).REACT_APP_API_ENDPOINT as
-      | string
-      | undefined);
+  // In Vite, runtime code must use import.meta.env (process.env is not available in browser).
+  // Netlify injects env vars at build time.
+  const env = import.meta.env as unknown as Record<string, string | undefined>;
+  const raw = env.REACT_APP_API_ENDPOINT;
   if (!raw) return '';
   return raw.endsWith('/') ? raw.slice(0, -1) : raw;
 }

@@ -12,7 +12,7 @@ export async function httpGet<T>(
     url = new URL(path, baseForUrl);
   } catch {
     throw new Error(
-      `Invalid API base URL. Set VITE_API_ENDPOINT in .env (current: ${JSON.stringify(base)}).`,
+      `Invalid API base URL. Set REACT_APP_API_ENDPOINT in .env (current: ${JSON.stringify(base)}).`,
     );
   }
   Object.entries(params).forEach(([k, v]) => {
