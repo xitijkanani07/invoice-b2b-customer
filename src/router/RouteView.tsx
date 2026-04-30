@@ -1,11 +1,13 @@
-import { useMemo, useSyncExternalStore } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import { CustomerPage } from '../pages/CustomerPage';
 import { HomePage } from '../pages/HomePage';
 import { StorePage } from '../pages/StorePage';
 import { getLocationSnapshot, readSearchParam, subscribeToLocationChanges } from './navigation';
+import { PasswordGate } from './PasswordGate';
 
 export function RouteView() {
   const loc = useSyncExternalStore(subscribeToLocationChanges, getLocationSnapshot, getLocationSnapshot);
+  const [unlocked, setUnlocked] = useState(() => window.localStorage.getItem('ih_pw_ok') === '1');
 
   const params = useMemo(() => {
     const store = readSearchParam(loc.search, 'store');
@@ -22,6 +24,17 @@ export function RouteView() {
       limit: Number.isFinite(limit) && limit > 0 ? limit : 25,
     };
   }, [loc.search]);
+
+  if (!unlocked) {
+    return (
+      <PasswordGate
+        onUnlock={() => {
+          window.localStorage.setItem('ih_pw_ok', '1');
+          setUnlocked(true);
+        }}
+      />
+    );
+  }
 
   if (loc.pathname === '/') return <HomePage page={params.page} limit={params.limit} />;
   if (loc.pathname === '/store') return <StorePage store={params.store} page={params.page} limit={params.limit} />;
