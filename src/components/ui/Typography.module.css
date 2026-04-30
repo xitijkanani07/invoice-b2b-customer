@@ -1,0 +1,16 @@
+.title {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.4px;
+  color: var(--text-h);
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  color: var(--text);
+}
+
+.muted {
+  color: var(--text);
+}
+

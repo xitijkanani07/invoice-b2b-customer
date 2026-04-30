@@ -1,0 +1,29 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.thead tr {
+  background: color-mix(in srgb, var(--surface) 65%, var(--code-bg));
+}
+
+.table th,
+.table td {
+  border-top: 1px solid var(--border);
+  padding: 12px 10px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: color-mix(in srgb, var(--surface) 80%, var(--accent-bg));
+}
+
+.table th {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+}
+

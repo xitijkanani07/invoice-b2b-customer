@@ -1,0 +1,12 @@
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.count {
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+}
+

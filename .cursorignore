@@ -1,0 +1,30 @@
+# Environment & secrets
+.env
+.env.*
+secrets/
+config/*.json
+
+# PM2 / ecosystem (may contain env variables)
+ecosystem.config.js
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Logs
+*.log
+logs/
+
+# Git
+.git/
+
+# Temporary / backups
+tmp/
+temp/
+*.sql
+*.dump
+*.bak

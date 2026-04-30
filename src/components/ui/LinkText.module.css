@@ -1,0 +1,16 @@
+.rowLink {
+  color: var(--text-h);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rowLink:hover {
+  color: var(--accent);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
