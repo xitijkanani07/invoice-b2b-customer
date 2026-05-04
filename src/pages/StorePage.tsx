@@ -67,8 +67,8 @@ export function StorePage({ store, page, limit }: Props) {
       breadcrumbs={
         <>
           <Link to="/">Home</Link>
-          <span style={{ color: 'var(--text)' }}>/</span>
-          <span>Store</span>
+          {/* <span style={{ color: 'var(--text)' }}>/</span>
+          <span>Store</span> */}
           {store ? (
             <>
               <span style={{ color: 'var(--text)' }}>/</span>
