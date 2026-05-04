@@ -6,7 +6,7 @@ import { getLocationSnapshot, readSearchParam, subscribeToLocationChanges } from
 import { PasswordGate } from './PasswordGate';
 
 const UNLOCK_KEY = 'invoiceB2bEanbled';
-const UNLOCK_TTL_MS = 10 * 60 * 1000;
+const UNLOCK_TTL_MS = 60 * 60 * 1000;
 
 export function RouteView() {
   const loc = useSyncExternalStore(subscribeToLocationChanges, getLocationSnapshot, getLocationSnapshot);
