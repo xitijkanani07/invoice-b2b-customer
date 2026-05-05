@@ -77,9 +77,9 @@ export function CustomerPage({ store, customerId, page, limit }: Props) {
         <>
           <Link to="/">Home</Link>
           <span style={{ color: 'var(--text)' }}>/</span>
-          <Link to={`/store?store=${encodeURIComponent(storeName)}`}>Store</Link>
+          <Link to={`/store?store=${encodeURIComponent(storeName)}`}>Customers</Link>
           <span style={{ color: 'var(--text)' }}>/</span>
-          <span>Customer</span>
+          <span>Orders</span>
         </>
       }
     >
