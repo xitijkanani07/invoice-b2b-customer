@@ -55,6 +55,12 @@ export function HomePage() {
   }, [q, stores]);
 
   const visibleStores = filtered;
+  const countLabel =
+    stores.length === 0
+      ? ''
+      : q.trim()
+        ? `${filtered.length}/${stores.length} stores`
+        : `${stores.length} stores`;
 
   return (
     <PageShell breadcrumbs={<span>Home</span>}>
@@ -65,6 +71,7 @@ export function HomePage() {
               <Title>Store list</Title>
             </div>
             <div className={styles.headerRight}>
+              <div className={styles.count}>{!loading ? countLabel : ''}</div>
               <IconButton
                 active={showSearch}
                 aria-label={showSearch ? 'Hide search' : 'Show search'}
