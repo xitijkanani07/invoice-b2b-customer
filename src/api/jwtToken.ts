@@ -1,9 +1,13 @@
 type JwtResponse = { token: string };
 
+import { getApiBaseUrl } from './config';
+
 const jwtCache = new Map<string, Promise<string>>();
 
 function getJwtEndpoint(shopName: string) {
-  const url = new URL('https://invoiceheroapi-test.mlveda.com/api/jwt');
+  const base = getApiBaseUrl();
+  const baseForUrl = base || window.location.origin;
+  const url = new URL('/api/jwt', baseForUrl);
   url.searchParams.set('shop', shopName);
   return url.toString();
 }
