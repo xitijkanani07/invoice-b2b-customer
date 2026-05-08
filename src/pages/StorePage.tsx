@@ -120,7 +120,6 @@ export function StorePage({ store, page, limit }: Props) {
               <th>Customer ID</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Created</th>
               <th style={{ width: 140 }}>Action</th>
             </tr>
           }
@@ -145,7 +144,6 @@ export function StorePage({ store, page, limit }: Props) {
                       </Link>
                     </td>
                     <td>{c.email}</td>
-                    <td>{new Date(c.createdAt).toLocaleString()}</td>
                     <td>
                       <Link className={[linkStyles.rowLink, linkStyles.nowrap].join(' ')} to={to}>
                         View orders <span aria-hidden>→</span>
